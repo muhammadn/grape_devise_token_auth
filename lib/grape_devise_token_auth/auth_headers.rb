@@ -32,6 +32,8 @@ module GrapeDeviseTokenAuth
     end
 
     def auth_headers_from_resource
+      client_id ||= 'default'
+
       auth_headers = {}
       resource.with_lock do
         if !GrapeDeviseTokenAuth.change_headers_on_each_request
