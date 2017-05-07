@@ -32,12 +32,16 @@ module GrapeDeviseTokenAuth
     end
 
     def auth_headers_from_resource
-      client_id ||= 'default'
 
       auth_headers = {}
       resource.with_lock do
         if !GrapeDeviseTokenAuth.change_headers_on_each_request
-          auth_headers = resource.extend_batch_buffer(token, client_id)
+          if client_id
+            auth_headers = resource.extend_batch_buffer(token, client_id)
+          else
+            client_id = 'default'
+            auth_headers = resource.extend_batch_buffer(token, client_id)
+          end
         elsif batch_request?
           resource.extend_batch_buffer(token, client_id)
           # don't set any headers in a batch request
